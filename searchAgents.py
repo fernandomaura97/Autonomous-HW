@@ -338,6 +338,7 @@ class CornersProblem(search.SearchProblem):
 
         successors = []
         cost = 0
+        vis = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -347,10 +348,11 @@ class CornersProblem(search.SearchProblem):
             
             
             [(x,y),vis] = state
-            # print("***xxx", x)            
-            # print("****yy: ",y)
-            # print("****vis: ", vis)
-            
+            """
+            print("***xxx", x)            
+            print("****yy: ",y)
+            print("****vis: ", vis)
+            """
             
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
@@ -358,18 +360,22 @@ class CornersProblem(search.SearchProblem):
                 
                 if(nextx,nexty) in self.corners:
                     if(nextx, nexty) == self.corners[0]:
-                        print("JAJA",action)
-                        
+                        #print("JAJA",action)
+                        #vis.append(nextx,nexty)
                         self.visited_c[0] = True
                     if(nextx, nexty) == self.corners[1]:
-                        print("JeJe",action)
+                        #print("JeJe",action)
+                        #vis.append(nextx,nexty)
                         self.visited_c[1] = True
                     if(nextx, nexty) == self.corners[2]:
-                        print("JoJo",action)
+                        #print("JoJo",action)
+                        #vis.append(nextx,nexty)
                         self.visited_c[2] = True
                     if(nextx, nexty) == self.corners[3]:
-                        print("JAJAJAJAJ",action)
+                        #print("JAJAJAJAJ",action)
+                        #vis.append(nextx,nexty)
                         self.visited_c[3] = True
+                        
                 newState = ((nextx,nexty),vis)
                 cost = 1
                 
@@ -409,7 +415,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-   
+    from util import manhattanDistance
     
     if problem.isGoalState(state):
         return 0
