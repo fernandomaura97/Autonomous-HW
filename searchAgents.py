@@ -291,9 +291,6 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
-       
-        
         self.visited_c = [False,False,False,False]
        
         """
@@ -335,7 +332,8 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
+        og = self.corners
+        print("og!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:", og)
         successors = []
         cost = 0
         vis = []
@@ -345,7 +343,7 @@ class CornersProblem(search.SearchProblem):
             #   
                 
             "*** YOUR CODE HERE ***"
-            
+            print("og!!!!!!!", og)
             
             [(x,y),vis] = state
             """
@@ -357,25 +355,36 @@ class CornersProblem(search.SearchProblem):
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
-                
+                    
                 if(nextx,nexty) in self.corners:
-                    if(nextx, nexty) == self.corners[0]:
+                   
+                    self.corners=list(self.corners)
+                    
+                    
+                    if(nextx, nexty) == og[0]:
+                        self.corners.pop(0)
                         #print("JAJA",action)
                         #vis.append(nextx,nexty)
                         self.visited_c[0] = True
-                    if(nextx, nexty) == self.corners[1]:
+                    if(nextx, nexty) == og[1]:
                         #print("JeJe",action)
                         #vis.append(nextx,nexty)
+                        self.corners.pop(1)
                         self.visited_c[1] = True
-                    if(nextx, nexty) == self.corners[2]:
+                    if(nextx, nexty) == og[2]:
                         #print("JoJo",action)
                         #vis.append(nextx,nexty)
+                        self.corners.pop(2)
                         self.visited_c[2] = True
-                    if(nextx, nexty) == self.corners[3]:
+                    if(nextx, nexty) == og[3]:
                         #print("JAJAJAJAJ",action)
                         #vis.append(nextx,nexty)
+                        self.corners.pop(3)
                         self.visited_c[3] = True
-                        
+                if (x,y) not in vis:
+                    vis.append((x,y))
+                    #print("appended vis", vis)
+                
                 newState = ((nextx,nexty),vis)
                 cost = 1
                 
@@ -422,7 +431,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
 
     else:
         distancesFromGoals = [] # Calculate all distances from goals(not visited corners)
-
+        print("S1!: ", state[1] )
         for index,item in enumerate(state[1]):
             if item == 0: # Not visited corner
                 # Use manhattan method #
