@@ -346,8 +346,8 @@ class CornersProblem(search.SearchProblem):
                 
             "*** YOUR CODE HERE ***"
             
-            
-            [(x,y),vis] = state
+            x,y = state[0]
+            corner = list(state[1])
             """
             print("***xxx", x)            
             print("****yy: ",y)
@@ -379,7 +379,7 @@ class CornersProblem(search.SearchProblem):
                 newState = ((nextx,nexty),vis)
                 cost = 1
                 
-                successors.append((newState,action,cost))
+                successors.append((newState,action,self.visited_c))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
