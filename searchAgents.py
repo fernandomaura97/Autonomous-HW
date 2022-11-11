@@ -292,10 +292,9 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+       
         
-        c1, c2, c3, c4 = False,False,False,False
-        
-        self.visited_c = [c1,c2,c3,c4]
+        self.visited_c = [False,False,False,False]
        
         """
         1   2 
@@ -338,6 +337,7 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        cost = 0
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -358,13 +358,18 @@ class CornersProblem(search.SearchProblem):
                 
                 if(nextx,nexty) in self.corners:
                     if(nextx, nexty) == self.corners[0]:
-                        self.visited_c[0] == True
+                        print("JAJA",action)
+                        
+                        self.visited_c[0] = True
                     if(nextx, nexty) == self.corners[1]:
-                        self.visited_c[1] == True
+                        print("JeJe",action)
+                        self.visited_c[1] = True
                     if(nextx, nexty) == self.corners[2]:
-                        self.visited_c[2] == True
+                        print("JoJo",action)
+                        self.visited_c[2] = True
                     if(nextx, nexty) == self.corners[3]:
-                        self.visited_c[3] == True
+                        print("JAJAJAJAJ",action)
+                        self.visited_c[3] = True
                 newState = ((nextx,nexty),vis)
                 cost = 1
                 
@@ -404,7 +409,23 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+   
+    
+    if problem.isGoalState(state):
+        return 0
+
+    else:
+        distancesFromGoals = [] # Calculate all distances from goals(not visited corners)
+
+        for index,item in enumerate(state[1]):
+            if item == 0: # Not visited corner
+                # Use manhattan method #
+                distancesFromGoals.append(manhattanDistance(state[0],corners[index]))
+
+        # Worst case. This guess should be higher than real. Pick higher distance #
+        return max(distancesFromGoals)
+    
+    # return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
