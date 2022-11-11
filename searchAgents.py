@@ -292,6 +292,15 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        
+        c1, c2, c3, c4 = False,False,False,False
+        
+        self.visited_c = [c1,c2,c3,c4]
+       
+        """
+        1   2 
+        3   4     
+        """
 
     def getStartState(self):
         """
@@ -299,6 +308,8 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+        
+        return [self.startingPosition, self.visited_c]
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -306,7 +317,14 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        if all(self.visited_c):
+            print("ueeeeee")
+            return True
+        else:
+            print("not yet: ", self.visited_c)
+            return False
         util.raiseNotDefined()
+        
 
     def getSuccessors(self, state: Any):
         """
@@ -323,12 +341,34 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-
+            #   
+                
             "*** YOUR CODE HERE ***"
+            
+            
+            [(x,y),vis] = state
+            # print("***xxx", x)            
+            # print("****yy: ",y)
+            # print("****vis: ", vis)
+            
+            
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                
+                if(nextx,nexty) in self.corners:
+                    if(nextx, nexty) == self.corners[0]:
+                        self.visited_c[0] == True
+                    if(nextx, nexty) == self.corners[1]:
+                        self.visited_c[1] == True
+                    if(nextx, nexty) == self.corners[2]:
+                        self.visited_c[2] == True
+                    if(nextx, nexty) == self.corners[3]:
+                        self.visited_c[3] == True
+                newState = ((nextx,nexty),vis)
+                cost = 1
+                
+                successors.append((newState,action,cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
