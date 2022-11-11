@@ -284,17 +284,34 @@ class CornersProblem(search.SearchProblem):
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
+        
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
+        
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
+           
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
+        
+        
+        
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
        
+                
+        self.visited = []
         
-        self.visited_c = [False,False,False,False]
+        
+        self.visits, self.visited_l = {}, []
+        self.corners_seen = []
+                
+        for i in self.corners: 
+            if self.startingPosition == i:
+                self.corners_seen.append((corner, True))
+            else:
+                self.corners_seen.append((corner,False))
+        self.corners_seen = tuple(self.corners_seen)
        
         """
         1   2 
@@ -308,23 +325,26 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         
-        return [self.startingPosition, self.visited_c]
-        util.raiseNotDefined()
+        return (self.startingPosition, self.corners_seen)
+       
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        if all(self.visited_c):
-            print("ueeeeee")
-            return True
-        else:
-            print("not yet: ", self.visited_c)
-            return False
-        util.raiseNotDefined()
-        
 
+        for corn in state[1]:
+            allvis = corn[1]
+            if allvis == False: 
+                return False
+            
+        return 
+        util.raiseNotDefined()
+            
+
+
+        
     def getSuccessors(self, state: Any):
         """
         Returns successor states, the actions they require, and a cost of 1.
@@ -337,8 +357,6 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
-        cost = 0
-        vis = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -347,43 +365,53 @@ class CornersProblem(search.SearchProblem):
             "*** YOUR CODE HERE ***"
             
             x,y = state[0]
-            corner = list(state[1])
+            vis = state[1]
             """
             print("***xxx", x)            
             print("****yy: ",y)
             print("****vis: ", vis)
             """
+            nwcorn = []
             
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
+                for corner in vis: 
+                    current = corner[0]
+                    if (nextx,nexty) == corner:
+                        nwcorn.append((current,True))
+                    else:
+                        nwcorn.append((current, corner[1]))
+                nwcorn = tuple(nwcorn)
+                cost = 1 
+                successors.append((((nextx,nexty), nwcorn), action, cost))
                 
-                if(nextx,nexty) in self.corners:
-                    if(nextx, nexty) == self.corners[0]:
-                        #print("JAJA",action)
-                        #vis.append(nextx,nexty)
-                        self.visited_c[0] = True
-                    if(nextx, nexty) == self.corners[1]:
-                        #print("JeJe",action)
-                        #vis.append(nextx,nexty)
-                        self.visited_c[1] = True
-                    if(nextx, nexty) == self.corners[2]:
-                        #print("JoJo",action)
-                        #vis.append(nextx,nexty)
-                        self.visited_c[2] = True
-                    if(nextx, nexty) == self.corners[3]:
-                        #print("JAJAJAJAJ",action)
-                        #vis.append(nextx,nexty)
-                        self.visited_c[3] = True
-                        
-                newState = ((nextx,nexty),vis)
-                cost = 1
-                
-                successors.append((newState,action,self.visited_c))
-
         self._expanded += 1 # DO NOT CHANGE
         return successors
+                         
+                
+    #old broken method (pacman only searched one corner and stopped): 
+    """  
+      if(nextx,nexty) in self.corners:
+        if(nextx, nexty) == self.corners[0]:
+            print("JAJA",action)
+            #vis.append(nextx,nexty)
+            vis[0] = True
+        if(nextx, nexty) == self.corners[1]:
+            print("JeJe",action)
+            #vis.append(nextx,nexty)
+            vis[1] = True
+        if(nextx, nexty) == self.corners[2]:
+            print("JoJo",action)
+            #vis.append(nextx,nexty)
+            vis[2] = True
+        if(nextx, nexty) == self.corners[3]:
+            print("JAJAJAJAJ",action)
+            #vis.append(nextx,nexty)
+            vis[3] = True
+    """       
 
+    
     def getCostOfActions(self, actions):
         """
         Returns the cost of a particular sequence of actions.  If those actions
@@ -411,27 +439,8 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
-    "*** YOUR CODE HERE ***"
-    from util import manhattanDistance
     
-    if problem.isGoalState(state):
-        return 0
 
-    else:
-        distancesFromGoals = [] # Calculate all distances from goals(not visited corners)
-
-        for index,item in enumerate(state[1]):
-            if item == 0: # Not visited corner
-                # Use manhattan method #
-                distancesFromGoals.append(manhattanDistance(state[0],corners[index]))
-
-        # Worst case. This guess should be higher than real. Pick higher distance #
-        return max(distancesFromGoals)
-    
-    # return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
